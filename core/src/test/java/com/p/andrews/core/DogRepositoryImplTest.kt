@@ -40,7 +40,7 @@ class DogRepositoryImplTest {
         val result = repository.getAllBreeds()
 
         // Then
-        assertEquals(listOf(DogBreed("bulldog")), result)
+        assertEquals(listOf(DogBreed("bulldog", "english"), DogBreed("bulldog", "french")), result)
     }
 
     @Test
