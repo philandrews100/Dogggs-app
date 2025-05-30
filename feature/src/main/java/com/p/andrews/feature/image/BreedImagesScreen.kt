@@ -1,5 +1,6 @@
 package com.p.andrews.feature.image
 
+import FullscreenImageOverlay
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,13 +47,6 @@ fun BreedImagesScreen(
     val state by viewModel.uiState.collectAsState()
     var selectedImage by remember { mutableStateOf<String?>(null) }
 
-    if (selectedImage != null) {
-        FullScreenImageDialog(
-            imageUrl = selectedImage!!,
-            onDismiss = { selectedImage = null }
-        )
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -81,8 +75,12 @@ fun BreedImagesScreen(
         contentColor = AppTheme.colors.primary.background,
         containerColor = AppTheme.colors.primary.background
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            when (state) {
+        Box(modifier = Modifier
+            .padding(innerPadding)
+            .fillMaxSize()
+        ) {
+
+            when (val currentState = state) {
                 is BreedImagesUiState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
@@ -90,15 +88,14 @@ fun BreedImagesScreen(
                 }
 
                 is BreedImagesUiState.Success -> {
-                    val images = (state as BreedImagesUiState.Success).images
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
+                        columns = GridCells.Fixed(2),
                         contentPadding = PaddingValues(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(images) { dog ->
+                        items(currentState.images) { dog ->
                             DogImageCard(
                                 imageUrl = dog.url,
                                 onClick = { selectedImage = dog.url }
@@ -109,11 +106,17 @@ fun BreedImagesScreen(
 
                 is BreedImagesUiState.Error -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = (state as BreedImagesUiState.Error).message)
+                        Text(text = currentState.message)
                     }
                 }
             }
 
+            selectedImage?.let { url ->
+                FullscreenImageOverlay(
+                    imageUrl = url,
+                    onDismiss = { selectedImage = null }
+                )
+            }
         }
     }
 }
