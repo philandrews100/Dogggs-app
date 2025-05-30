@@ -47,8 +47,8 @@ class BreedListViewModelTest {
 
         val state = viewModel.state.value
         assertEquals(2, state.breeds.size)
-        assertEquals("url1", state.breeds.first { it.name == "bulldog" }.imageUrl)
-        assertEquals("url2", state.breeds.first { it.name == "beagle" }.imageUrl)
+        assertEquals("url1", state.breeds.first { it.mainBreed == "bulldog" }.imageUrl)
+        assertEquals("url2", state.breeds.first { it.mainBreed == "beagle" }.imageUrl)
         assertFalse(state.isLoading)
     }
 
@@ -80,7 +80,7 @@ class BreedListViewModelTest {
 
         val state = viewModel.state.value
         assertEquals(1, state.breeds.size)
-        assertEquals("terrier", state.breeds[0].name)
+        assertEquals("terrier", state.breeds[0].mainBreed)
         assertNull(state.error)
     }
 
@@ -98,8 +98,8 @@ class BreedListViewModelTest {
         val filtered = viewModel.filteredBreeds.first { it.isNotEmpty() }
 
         assertEquals(3, filtered.size)
-        assertTrue(filtered.any { it.name == "bulldog" })
-        assertTrue(filtered.any { it.name == "boxer" })
-        assertTrue(filtered.any { it.name == "beagle" })
+        assertTrue(filtered.any { it.mainBreed == "bulldog" })
+        assertTrue(filtered.any { it.mainBreed == "boxer" })
+        assertTrue(filtered.any { it.mainBreed == "beagle" })
     }
 }
