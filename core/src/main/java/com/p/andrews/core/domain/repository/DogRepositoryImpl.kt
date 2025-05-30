@@ -11,8 +11,15 @@ class DogRepositoryImpl(
     override suspend fun getAllBreeds(): List<DogBreed> {
         return api.getAllBreeds()
             .message
-            .keys
-            .map { DogBreed(it) }
+            .flatMap { (main, subs) ->
+                if (subs.isEmpty()) {
+                    listOf(DogBreed(mainBreed = main))
+                } else {
+                    subs.map { sub ->
+                        DogBreed(mainBreed = main, subBreed = sub)
+                    }
+                }
+            }
     }
 
     override suspend fun getImagesForBreed(breed: String): List<DogImage> {
@@ -22,8 +29,7 @@ class DogRepositoryImpl(
     }
 
     override suspend fun getRandomImageForBreed(breed: String): DogImage {
-        val dogImage = api.getSingleRandomImageForBreed(breed).message
-        return DogImage(dogImage)
-
+        val url = api.getSingleRandomImageForBreed(breed).message
+        return DogImage(url)
     }
 }

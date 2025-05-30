@@ -10,10 +10,9 @@ interface DogApiService {
     @GET("breeds/list/all")
     suspend fun getAllBreeds(): BreedResponse
 
-    @GET("breed/{breed}/images/random/10")
-    suspend fun getImagesForBreed(@Path("breed") breed: String): ImageResponse
+    @GET("breed/{breedPath}/images/random/10")
+    suspend fun getImagesForBreed(@Path("breedPath", encoded = true) breedPath: String): ImageResponse
 
-    // ✅ Add this:
-    @GET("breed/{breed}/images/random")
-    suspend fun getSingleRandomImageForBreed(@Path("breed") breed: String): SingleImageResponse
+    @GET("breed/{breedPath}/images/random")
+    suspend fun getSingleRandomImageForBreed(@Path("breedPath", encoded = true) breedPath: String): SingleImageResponse
 }

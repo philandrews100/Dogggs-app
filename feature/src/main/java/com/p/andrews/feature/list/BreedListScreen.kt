@@ -4,18 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,6 +37,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BreedListScreen(
     viewModel: BreedListViewModel = koinViewModel(),
@@ -45,6 +47,8 @@ fun BreedListScreen(
     val filteredBreeds by viewModel.filteredBreeds.collectAsState()
     var searchInput by remember { mutableStateOf("") }
     val debounceScope = rememberCoroutineScope()
+    val mainBreeds by viewModel.allMainBreeds.collectAsState()
+    val selectedMain by viewModel.selectedMainBreed.collectAsState()
 
     // Debounced search
     LaunchedEffect(searchInput) {
@@ -63,36 +67,59 @@ fun BreedListScreen(
 
         else -> Scaffold(
             topBar = {
-                BreedSearchBar(query = searchInput, onQueryChanged = { searchInput = it })
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Dogggs",
+                            color = AppTheme.colors.textAndIcons.title
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = AppTheme.colors.primary.cardBackground,
+                        navigationIconContentColor = AppTheme.colors.textAndIcons.icon,
+                        titleContentColor = AppTheme.colors.textAndIcons.title
+                    )
+                )
             },
             contentColor = AppTheme.colors.primary.background,
             containerColor = AppTheme.colors.primary.background
         ) { innerPadding ->
-            if (filteredBreeds.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No breeds found.", color = AppTheme.colors.textAndIcons.desc)
-                }
-            } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(filteredBreeds) { breed ->
-                        BreedListItem(
-                            name = breed.name,
-                            imageUrl = breed.imageUrl
-                        ) {
-                            onBreedSelected(breed.name)
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            ) {
+                BreedSearchBar(query = searchInput, onQueryChanged = { searchInput = it })
+                MainBreedFilterPills(
+                    allMainBreeds = mainBreeds,
+                    selected = selectedMain,
+                    onSelected = { viewModel.selectedMainBreed.value = it }
+                )
+                if (filteredBreeds.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No breeds found.", color = AppTheme.colors.textAndIcons.desc)
+                    }
+                } else {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(filteredBreeds) { breed ->
+                            BreedListItem(
+                                name = breed.displayName,
+                                imageUrl = breed.imageUrl
+                            ) {
+                                onBreedSelected(breed.apiPath)
+                            }
                         }
                     }
                 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.p.andrews.core.ui.DogImageCard
+import com.p.andrews.core.ui.NoResultsView
 import com.p.andrews.style.AppTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -80,6 +81,7 @@ fun BreedImagesScreen(
             .fillMaxSize()
         ) {
 
+
             when (val currentState = state) {
                 is BreedImagesUiState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -88,18 +90,22 @@ fun BreedImagesScreen(
                 }
 
                 is BreedImagesUiState.Success -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(currentState.images) { dog ->
-                            DogImageCard(
-                                imageUrl = dog.url,
-                                onClick = { selectedImage = dog.url }
-                            )
+                    if (currentState.images.isEmpty()) {
+                        NoResultsView(message = "No doggs found for \"$breed\"")
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            contentPadding = PaddingValues(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(currentState.images) { dog ->
+                                DogImageCard(
+                                    imageUrl = dog.url,
+                                    onClick = { selectedImage = dog.url }
+                                )
+                            }
                         }
                     }
                 }
