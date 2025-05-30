@@ -1,6 +1,5 @@
 package com.p.andrews.core.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,10 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.p.andrews.style.AppTheme
 import com.p.andrews.style.MultiThemePreview
 
@@ -52,11 +48,9 @@ fun BreedListItem(
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 if (imageUrl != null) {
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = "$name image",
-                        modifier = Modifier.matchParentSize(),
-                        contentScale = ContentScale.Crop
+                    DogImage(
+                        imageUrl = imageUrl,
+                        modifier = Modifier.matchParentSize()
                     )
                 } else {
                     CircularProgressIndicator(
