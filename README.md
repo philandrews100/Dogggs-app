@@ -2,6 +2,9 @@
 
 Dogggs is an Android application built with **Jetpack Compose**, **Koin**, and a **Clean Architecture** approach. It uses the [Dog CEO API](https://dog.ceo/dog-api/) to fetch and display dog breeds and breed-specific images in a responsive, grid UI.
 
+## Test Results
+![Test Status](https://github.com/philandrews100/Dogggs-app/actions/workflows/tests.yml/badge.svg)
+
 ## ✨ Features
 
 - Browse a list of all dog breeds.
